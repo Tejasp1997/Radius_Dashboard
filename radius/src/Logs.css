@@ -1,0 +1,54 @@
+/* Logs.css */
+
+.dashboard-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #333;
+  color: #fff;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.overall-count {
+  font-size: 24px;
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+.connected-users-box,
+.logs-table {
+  margin-bottom: 20px;
+}
+
+.count-box {
+  font-size: 36px;
+  font-weight: bold;
+  background-color: #2196F3;
+  color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #555;
+  color: #fff;
+}
