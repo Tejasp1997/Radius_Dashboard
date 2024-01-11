@@ -12,6 +12,9 @@
     "axios": "^1.6.4",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "mariadb": "^3.2.3",
+    "moment": "^2.30.1",
+    "mysql2": "^3.7.0"
   }
 }
