@@ -9,6 +9,9 @@ const port = 3001;
 
 app.use(cors());
 
+app.use(express.json());
+
+
 // Create a MySQL connection pool
 const pool = mariadb.createPool({
   host: "127.0.0.1",
@@ -33,6 +36,10 @@ const connectedUsers = {};
 let lastReadPosition = 0;
 
 let lastProcessedTimestamp = moment(); // Set an initial timestamp
+
+// Create a counter to store the daily counts of incorrect logins
+const dailyIncorrectLogins = {};
+
 
 app.get("/api/logs", async (req, res) => {
   const radiusLogPath = "/var/log/freeradius/radius.log";
@@ -97,6 +104,13 @@ async function processLogs(logs) {
      // const status = statusMatch ? statusMatch[2].trim() : "Unknown";
      const statusMatch = log.match(/Auth:\s+\((\d+)\)\s+([^:]+):\s*(Login (OK|incorrect))/);
      const status = statusMatch ? statusMatch[3].trim() : "Unknown";
+
+     // Check if the login status is 'incorrect' and increment the count
+    if (status === "incorrect") {
+      const formattedDate = dateObject.format("YYYY-MM-DD");
+      dailyIncorrectLogins[formattedDate] = (dailyIncorrectLogins[formattedDate] || 0) + 1;
+    }
+
 
      const nameMatch = log.match(/\[([^)]+)\]/);
       const name = nameMatch ? nameMatch[1] : "Unknown";
@@ -205,6 +219,90 @@ app.get("/api/logs/db", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+// Endpoint to get the daily count of incorrect logins
+app.get("/api/incorrect-logins", (req, res) => {
+  const date = req.query.date;
+
+  // Check if the date is provided
+  if (!date) {
+    return res.status(400).json({ error: "Date is required in the query parameters." });
+  }
+
+  // Check if the date is in the correct format (YYYY-MM-DD)
+  if (!moment(date, "YYYY-MM-DD", true).isValid()) {
+    return res.status(400).json({ error: "Invalid date format. Please use YYYY-MM-DD." });
+  }
+  try {
+    const dailyCount = dailyIncorrectLogins[date];
+    const safeCount = dailyCount !== undefined ? dailyCount : 0;
+    res.json({ date, dailyCount: safeCount });
+  } catch (error) {
+    console.error("Error fetching incorrect login count:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+  // Fetch the count of incorrect logins for the provided date
+//   const dailyCount = dailyIncorrectLogins[date] || 0;
+// console.log(dailyCount)
+//   res.json({ date, dailyCount });
+// });
+app.get("/api/logs-daily-count", async (req, res) => {
+  try {
+    const conn = await pool.getConnection();
+    const query = `
+      SELECT date, COUNT(DISTINCT macAddress) as count
+      FROM logs
+      GROUP BY date
+      ORDER BY date;
+    `;
+    const result = await conn.query(query);
+    conn.release();
+
+    // Convert the result to an object for easier consumption
+    const dailyCounts = result.reduce((acc, { date, count }) => {
+      acc[date] = Number(count);
+      return acc;
+    }, {});
+console.log(dailyCounts)
+    res.json(dailyCounts);
+  } catch (error) {
+    console.error("Error fetching daily log counts from database:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+//LOGIN
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body;
+  // Perform authentication logic here (e.g., check username and password against a database)
+  if (username === "admin" && password === "admin") {
+    // Generate a token or session identifier
+    const token = generateToken(username);
+    res.json({ token });
+  } else {
+    res.status(401).json({ error: "Invalid username or password" });
+  }
+});
+
+function generateToken(username) {
+  // Implement token generation logic (e.g., using JWT)
+  // Return a token that can be used for authentication
+   const payload = {
+    username: username,
+    // Add any additional user information here
+  };
+
+  // Generate a JWT token with the payload and a secret key
+  const token = jwt.sign(payload, 'cdac@boss$radius', { expiresIn: '1h' }); // Token expires in 1 hour
+
+  return token;
+}
+
+
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

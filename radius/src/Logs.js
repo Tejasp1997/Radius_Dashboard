@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+//import axios from "axios";
+//import { Line } from "react-chartjs-2";
 import "./Logs.css";
 
 const Logs = () => {
@@ -80,16 +82,18 @@ const Logs = () => {
   };
   return (
     <div className="dashboard-container">
-      <Link to="/fetchlogs">check logs</Link>
+      <nav className="navbar">
+        <Link to="/fetchlogs">Fetch Logs</Link>
+      </nav>
       <div className="dashboard-header">
         <h1>Dashboard</h1>
-        <div className="overall-count">{overallCount}</div>
+        <div className="circle-box">
+          <div className="circle">
+            <div className="circle-content">{overallCount}</div>
+          </div>
+        </div>
       </div>
       <div className="dashboard-content">
-        <div className="connected-users-box">
-          <h2>Connected Users</h2>
-          <div className="count-box">{overallCount}</div>
-        </div>
         <div className="logs-table">
           <h1>Connected Users Log</h1>
           <table>
@@ -115,14 +119,14 @@ const Logs = () => {
                 const nameMatch = user.latestLog.match(/\[([^)]+)\]/);
                 const name = nameMatch ? nameMatch[1] : "Unknown";
                 console.log("Log Entry:", user.latestLog);
-                const statusMatch = user.latestLog.match(/Login (OK|incorrect)/);
-const status = statusMatch ? statusMatch[1] : "Unknown";
+                const statusMatch =
+                  user.latestLog.match(/Login (OK|incorrect)/);
+                const status = statusMatch ? statusMatch[1] : "Unknown";
 
-               
                 console.log("Status Match:", statusMatch);
-                
+
                 console.log("Extracted Status:", status);
-                
+
                 return (
                   <tr key={user.macAddress}>
                     <td>{date}</td>
@@ -138,6 +142,65 @@ const status = statusMatch ? statusMatch[1] : "Unknown";
         </div>
       </div>
     </div>
+
+    //     <div className="dashboard-container">
+
+    //       <div className="dashboard-header">
+    //         <h1>Dashboard</h1>
+    //         <div className="overall-count">{overallCount}</div>
+    //       </div>
+    //       <div className="dashboard-content">
+    //         <div className="connected-users-box">
+    //           <h2>Connected Users</h2>
+    //           <div className="count-box">{overallCount}</div>
+    //         </div>
+    //         <div className="logs-table">
+    //           <h1>Connected Users Log</h1>
+    //           <table>
+    //             <thead>
+    //               <tr>
+    //                 <th>Date</th>
+    //                 <th>Time</th>
+    //                 <th>Name</th>
+    //                 <th>MAC Address</th>
+    //                 <th>Status</th>
+    //               </tr>
+    //             </thead>
+    //             <tbody>
+    //               {connectedUsers.map((user) => {
+    //                 const dateTimeParts = user.latestLog.split(" ");
+    //                 const date = formatDate(
+    //                   `${dateTimeParts[1]} ${dateTimeParts[2]} ${dateTimeParts[4]}`
+    //                 );
+    //                 //const date = dateTimeParts.slice(1, 4).join(' ');
+    //                 //const time = dateTimeParts[4];
+    //                 const time = formatTime(dateTimeParts[3]);
+
+    //                 const nameMatch = user.latestLog.match(/\[([^)]+)\]/);
+    //                 const name = nameMatch ? nameMatch[1] : "Unknown";
+    //                 console.log("Log Entry:", user.latestLog);
+    //                 const statusMatch = user.latestLog.match(/Login (OK|incorrect)/);
+    // const status = statusMatch ? statusMatch[1] : "Unknown";
+
+    //                 console.log("Status Match:", statusMatch);
+
+    //                 console.log("Extracted Status:", status);
+
+    //                 return (
+    //                   <tr key={user.macAddress}>
+    //                     <td>{date}</td>
+    //                     <td>{time}</td>
+    //                     <td>{name}</td>
+    //                     <td>{user.macAddress}</td>
+    //                     <td>{status}</td>
+    //                   </tr>
+    //                 );
+    //               })}
+    //             </tbody>
+    //           </table>
+    //         </div>
+    //       </div>
+    //     </div>
   );
 };
 

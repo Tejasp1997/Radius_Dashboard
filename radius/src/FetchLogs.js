@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import './Logs.css'
 
 const FetchLogs = () => {
   const [selectedDate, setSelectedDate] = useState("");
@@ -17,16 +18,21 @@ const FetchLogs = () => {
   };
 
   return (
-    <div>
+    <div className="dashboard-container">
+      {/* <div className="dashboard-header">
       <h2>Fetch Logs</h2>
+      </div> */}
+      <div>
       <label>Select Date: </label>
+      </div>
       <input
         type="date"
         value={selectedDate}
         onChange={(e) => setSelectedDate(e.target.value)}
       />
       <button onClick={handleFetchLogs}>Fetch Logs</button>
-
+      <div className="dashboard-content">
+        <div className="logs-table">
       <table>
         <thead>
           <tr>
@@ -40,7 +46,6 @@ const FetchLogs = () => {
         <tbody>
           {logs.map((log, index) => (
             <tr key={index}>
-              {/* <td>{log.date.split("T")[0]}</td> */}
               <td>{new Date(log.date).toLocaleDateString()}</td>
               <td>{log.time}</td>
               <td>{log.name}</td>
@@ -50,6 +55,8 @@ const FetchLogs = () => {
           ))}
         </tbody>
       </table>
+    </div>
+    </div>
     </div>
   );
 };

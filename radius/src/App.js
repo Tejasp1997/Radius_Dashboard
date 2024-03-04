@@ -1,15 +1,17 @@
 import React from 'react';
-import { BrowserRouter as Router,Routes, Route } from 'react-router-dom';
-
+import { BrowserRouter as Router,Routes, Route, Navigate } from 'react-router-dom';
+import Login from './Login'
 import Logs from './Logs';
 import FetchLogs from './FetchLogs';
 
 const App = () => {
+  const isAuthenticated = localStorage.getItem("token"); // Check if user is authenticated
   return (
     <div>
       <Router>
         <Routes>
-      <Route exact path="/" element={<Logs />} />
+       <Route path="/login" element={<Login />} />
+      <Route path="/" element={isAuthenticated ? <Logs /> : <Navigate to="/login" />} />
       <Route path="/fetchlogs" element={<FetchLogs />} />
       </Routes>
       </Router>
