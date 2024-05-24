@@ -1,0 +1,324 @@
+.dashboard-container {
+
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.login-ok {
+  color: green;
+}
+
+.login-incorrect {
+  color: red;
+}
+
+.p-paginator-next, .p-paginator-last, .p-paginator-first, .p-paginator-prev {
+  width: 20px;
+  height: 20px;
+}
+
+.p-paginator-page {
+
+  font-size: 20px;
+}
+
+.p-paginator .p-paginator-page {
+  margin-right: 10px; /* Adjust the margin as needed */
+}
+
+.rectangle h2 {
+  margin-bottom: 5px;
+  margin-top: 0px;
+  white-space: nowrap;
+  /* Prevent text from wrapping */
+  overflow: hidden;
+  /* Hide overflowing text */
+  text-overflow: ellipsis;
+
+  text-transform: uppercase;
+  color: #000000;
+}
+.logs-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.p-datatable .p-column-header-content {
+  display: flex;
+  justify-content: center;
+}
+
+.logs-table th,
+.logs-table td {
+  border: 1px solid #000000;
+  padding: 8px; 
+  color: #000000;
+
+}
+
+.logs-table h3{
+ font-size: 45px;
+ color: #000000;
+}
+.logs-table th {
+  background: #4d4949;
+  color :white;
+}
+
+.logs-table td {
+  background: #ebebeb;
+  font-weight: bold;
+  font-size: 20px;
+  
+}
+.logs-table tr:nth-child(odd) td {
+  background: #ffffff; /* White background for odd rows */
+}
+
+.logs-table tr:nth-child(even) td {
+  background: #F3FFFE; /* Grey background for even rows */
+}
+
+.line-chart {
+  margin-top: 20px;
+}
+
+
+.p-button-success{
+  margin-left: 25px;
+  height: 35px;
+  width: 130px;
+}
+.p-button-success label{
+  margin-left: 5px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -200px; /* Hide sidebar by default */
+  width: 200px;
+  height: 100%;
+  background-color: #333;
+  color: #fff;
+  transition: left 0.3s ease-in-out;
+}
+/* Navbar css */
+.navbar {
+  background-color: #333;
+  padding: 10px 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Center vertically */
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+.navbar h1 {
+  margin: 0;
+  text-align: center;
+  /* Center the text horizontally */
+  flex-grow: 1;
+  font-size: 40px;
+}
+.lgt-btn {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: opacity 0.25s ease-out;
+  align-items: center;
+  margin-left: auto;
+  padding: 10px 10px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.lgt-btn:hover {
+  opacity: 0.8;
+}
+
+
+.dashboard-header{
+display: flex;
+/* margin-inline: 100px; */
+}
+
+.rectangle {
+  width: 140px;
+  height: 90px;
+  background-color: rgb(75, 243, 33);
+  border: 2px solid #333;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  right: 300px;
+  padding: 20px 40px;
+  margin-top: 20px;
+  margin-left: auto;
+  
+}
+.rectangle.second{
+  margin-left:50px;
+  margin-right: -190px;
+  background-color: #0fedf5;
+}
+
+.rectangle.third{
+  width: 160px;
+  margin-left: 250px;
+  background-color: #ff1361;
+}
+.number {
+  font-size: 40px;
+  color: #000000;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.notify{
+  color:#000000
+}
+
+.notification h3{
+  display: flex;
+  color: #000000;
+}
+
+
+
+.search-container {
+  display: flex;
+  align-items: center;
+}
+.topview{
+  padding-bottom: 20px;
+}
+.logview{
+  padding-bottom: 40px;
+}
+.regview{
+  padding-bottom: 40px;
+}
+.datesrch{
+  font-size: 16px; /* Adjust the font size as needed */
+  padding: 7px 12px; /* Adjust the padding as needed */
+  border-radius: 4px; /* Adjust the border radius as needed */
+  border: 1px solid #ccc; /* Adjust the border color as needed */
+  outline: none;
+}
+
+.reg{
+  font-size: 40px;
+  color: #000000;
+  
+}
+/* .fetch-btn{
+  margin-left: 10px;
+  padding: 7px 12px;
+  text-decoration: solid;
+  font-size: medium;
+  font-weight: bold;
+  background-color: rgb(255, 255, 255);
+} */
+
+/* CSS */
+.button-7 {
+  background-color: #0095ff;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.15385;
+  margin-left: 10px;
+  outline: none;
+  padding: 8px .8em;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  white-space: nowrap;
+  padding: 9px 12px;
+}
+
+.button-7:hover,
+.button-7:focus {
+  background-color: #07c;
+}
+
+.button-7:focus {
+  box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
+}
+
+.button-7:active {
+  background-color: #0064bd;
+  box-shadow: none;
+}
+
+/* .search-icon {
+  
+  position: absolute;
+  right: 60px;
+} */
+
+.search-input {
+  font-size: 16px; /* Adjust the font size as needed */
+  padding: 11px 12px; /* Adjust the padding as needed */
+  border-radius: 4px; /* Adjust the border radius as needed */
+  border: 1px solid #ccc; /* Adjust the border color as needed */
+  outline: none;
+  position: absolute;
+  right: 100px;
+}
+.two{
+  font-size: 20px; /* Adjust the font size as needed */
+  padding: 11px 12px; /* Adjust the padding as needed */
+  border-radius: 4px; /* Adjust the border radius as needed */
+  border: 1px solid #ccc; /* Adjust the border color as needed */
+  outline: none;
+  position: absolute;
+  right: 120px;
+  
+}
+
+/* Style the search icon */
+.search-icon i {
+  font-size: 20px; /* Adjust the icon size as needed */
+}
+
+.p-dialog .p-dialog-title{
+  text-align: center;
+  font-size: larger;
+  font-weight: bolder;
+  margin-top: 10px;
+}
+svg.p-icon {
+  pointer-events: auto;
+  width: 20px;  /* Adjust width as needed */
+  height: 20px; /* Adjust height as needed */
+  fill: currentColor; /* Ensures the icon uses the current text color */
+  stroke: currentColor; /* Makes the stroke the same color */
+  stroke-width: 1; /* Adjust the stroke width to make it appear bold */
+}
+
+/* Optional: To ensure it uses a bold color */
+.p-icon {
+  color: black; /* Change to any desired color */
+  font-weight:100; /* Ensures the color is bold */
+}
