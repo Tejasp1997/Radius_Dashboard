@@ -4,19 +4,26 @@ const cors = require("cors");
 const moment = require("moment");
 const mariadb = require("mariadb");
 const jwt = require("jsonwebtoken");
-// const socketIO = require('socket.io');
-const http = require('http');
+const socketIO = require("socket.io");
+const http = require("http");
 
 const app = express();
 const server = http.createServer(app);
-// const io = socketIO(server);
+const io = socketIO(server , {
+  cors: {
+    origin: 'http://172.23.1.14:3000',
+    methods: ['GET', 'POST']
+  }
+});
 const port = 5004;
 
-app.use(cors({
-  origin: 'http://172.23.1.14:3000',
-   methods: 'GET,POST,PUT,DELETE',
-   allowedHeaders: 'Content-Type,Authorization'
-}));
+app.use(
+  cors({
+    origin: "http://172.23.1.14:3000",
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 
 app.use(express.json());
 
@@ -37,37 +44,32 @@ pool
   .catch((err) => {
     console.error("Error connecting to MariaDB:", err);
   });
+
 // Store connected users and their connection count along with the latest log entry
 const connectedUsers = {};
-
 // Store the last read position in the log file
 let lastReadPosition = 0;
-
-let lastProcessedTimestamp = moment(); // Set an initial timestamp
-
 // Create a counter to store the daily counts of incorrect logins
 const dailyIncorrectLogins = {};
 
+io.on("connection", (socket) => {
+  console.log("New client connected");
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
+
 app.get("/api/logs", async (req, res) => {
   const radiusLogPath = "/var/log/freeradius/radius.log";
-  const date = req.query.date;
-
   // Read the logs from the file or use a log parser library
   const logs = readNewLogs(radiusLogPath);
-
   // Process logs to count connected users and store in the database
   await processLogs(logs);
-
   // Calculate the overall connected users count
   const overallCount = Object.keys(connectedUsers).length;
-
-
-//console.log("overallcount:",overallCount)
   // Send the connected users count as JSON
   res.json({ overallCount, connectedUsers });
 });
-
-
 
 async function processLogs(logs) {
   for (const log of logs) {
@@ -90,19 +92,16 @@ async function processLogs(logs) {
 
       const nameMatch = log.match(/\[([^)]+)\]/);
       const name = nameMatch ? nameMatch[1] : "Unknown";
-      
+
       if (status === "OK") {
-      const isRegistered = await checkIfRegistered(macAddress);
-      if (!isRegistered) {
-        // Insert the device into the registered_users table
-        await registerDevice(macAddress, name);
-
-        // Increment the count of registered devices
-       // await incrementRegisteredDevicesCount();
-
-        // Notify about the new device registration
-        console.log(`New device registered: ${name} (${macAddress})`);
-      }
+        const isRegistered = await checkIfRegistered(macAddress);
+        if (!isRegistered) {
+          // Insert the device into the registered_users table
+          await registerDevice(macAddress, name);
+          io.emit("new-device-registered", { macAddress, name });
+          // Notify about the new device registration
+          console.log(`New device registered: ${name} (${macAddress})`);
+        }
       }
       // Insert parsed data into the database
       const query = `
@@ -143,7 +142,7 @@ function readNewLogs(logPath) {
     const newLogs = logContent.slice(lastReadPosition);
 
     // Update the last read position
-    lastReadPosition = Buffer.from(logContent).length;
+    lastReadPosition = Buffer.from(logContent).length;  
 
     // Split the new log content into an array of logs based on newline characters
     //const logsArray = newLogs.split('\n');
@@ -175,7 +174,6 @@ async function checkIfRegistered(macAddress) {
   }
 }
 
-
 async function registerDevice(macAddress, name) {
   const conn = await pool.getConnection();
   try {
@@ -183,7 +181,7 @@ async function registerDevice(macAddress, name) {
     console.log("Executing SQL query:", query); // Debugging statement
     console.log("Data to insert:", macAddress, name);
     await conn.query(query, [macAddress, name]);
-    console.log("Device registered successfully");    
+    console.log("Device registered successfully");
   } catch (error) {
     console.error("Error registering device:", error);
   } finally {
@@ -206,21 +204,6 @@ app.get("/api/new-devices", async (req, res) => {
   }
 });
 
-//
-// async function incrementRegisteredDevicesCount() {
-//   const conn = await pool.getConnection();
-//   try {
-//     // Increment the count of registered devices in the counter table
-//     const updateQuery = `UPDATE registered_devices_counter SET count = count + 1`;
-//     await conn.query(updateQuery);
-//   } catch (error) {
-//     console.error("Error incrementing registered devices count:", error);
-//   } finally {
-//     conn.release();
-//   }
-// }
-
-
 app.get("/api/total-registered-devices", async (req, res) => {
   try {
     // Fetch the total registered devices count from the database
@@ -239,19 +222,20 @@ app.get("/api/total-registered-devices", async (req, res) => {
 async function getRegisteredDevicesInfo() {
   try {
     const conn = await pool.getConnection();
-   // const query = "SELECT COUNT(*) AS totalCount FROM registered_users";
-   const query = "SELECT name, registration_date, macAddress FROM registered_users" 
-   const result = await conn.query(query);
+    // const query = "SELECT COUNT(*) AS totalCount FROM registered_users";
+    const query =
+      "SELECT name, registration_date, macAddress FROM registered_users";
+    const result = await conn.query(query);
     conn.release();
-   // const totalCount = Number(result[0].totalCount);
+    // const totalCount = Number(result[0].totalCount);
     const totalCount = result.length;
-     // Map the result to include additional information
-     const devicesInfo = result.map(row => ({
+    // Map the result to include additional information
+    const devicesInfo = result.map((row) => ({
       name: row.name,
       registration_date: row.registration_date,
-      macAddress: row.macAddress
+      macAddress: row.macAddress,
     }));
-   // console.log(devicesInfo);
+    // console.log(devicesInfo);
     return { totalCount, devicesInfo };
   } catch (error) {
     console.error("Error fetching total registered devices count:", error);
@@ -282,7 +266,7 @@ app.get("/api/logs/db", async (req, res) => {
     }));
 
     res.json({ logs: logsFromDB });
-    console.log('fetchlogs:',logsFromDB)
+    console.log("fetchlogs:", logsFromDB);
   } catch (error) {
     console.error("Error fetching logs from database:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -290,8 +274,8 @@ app.get("/api/logs/db", async (req, res) => {
 });
 
 // Endpoint to get the daily count of incorrect logins
-app.get("/api/incorrect-logins", async(req, res) => {
-  // const todayDate = moment().format("YYYY-MM-DD"); 
+app.get("/api/incorrect-logins", async (req, res) => {
+  // const todayDate = moment().format("YYYY-MM-DD");
   try {
     const conn = await pool.getConnection();
     // Query the database for the total count and details of incorrect logins for today
@@ -304,28 +288,24 @@ app.get("/api/incorrect-logins", async(req, res) => {
     const currentCountResult = await conn.query(incorrectQuery, [
       todayDate,
       todayDate,
-      
     ]);
-    
-    
+
     const currentCounts = {
-      incorrectCount: currentCountResult.length > 0 ? Number(currentCountResult[0].incorrectCount) : 0
+      incorrectCount:
+        currentCountResult.length > 0
+          ? Number(currentCountResult[0].incorrectCount)
+          : 0,
     };
-    
+
     //console.log("currentCounts:", currentCounts);
     conn.release();
 
-
-   
     res.json(currentCounts);
-    
-   
   } catch (error) {
     console.error("Error fetching incorrect login details for today:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-
-})
+});
 
 app.get("/api/logs-daily-count", async (req, res) => {
   try {
@@ -353,16 +333,14 @@ app.get("/api/logs-daily-count", async (req, res) => {
     const result = await conn.query(query);
     conn.release();
 
-    
-
     // Convert the result to an object for easier consumption
     const dailyCounts = result.reduce((acc, { date, count }) => {
       acc[date] = Number(count);
       return acc;
     }, {});
 
-  //  console.log("dailycount:", dailyCounts);
-  //  console.log("currentCount:", currentCount);
+    //  console.log("dailycount:", dailyCounts);
+    //  console.log("currentCount:", currentCount);
 
     res.json({ dailyCounts, currentCount });
   } catch (error) {
@@ -410,7 +388,6 @@ app.get("/api/graph-daily-count", async (req, res) => {
   }
 });
 
-
 app.get("/api/graph-incorrect-counts", async (req, res) => {
   try {
     const conn = await pool.getConnection();
@@ -439,7 +416,7 @@ app.get("/api/graph-incorrect-counts", async (req, res) => {
 
     result.forEach(({ date, count }) => {
       const formattedDate = date.toString().split(" ").slice(0, 4).join(" ");
-      graphincorrectCounts[formattedDate ] = Number(count);
+      graphincorrectCounts[formattedDate] = Number(count);
     });
 
     res.json(graphincorrectCounts);
@@ -449,7 +426,6 @@ app.get("/api/graph-incorrect-counts", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 //LOGIN
 app.post("/api/login", (req, res) => {
@@ -492,5 +468,3 @@ app.post("/api/logout", (req, res) => {
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-

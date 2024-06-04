@@ -10,6 +10,7 @@ import Logs from './Logs'
 import RegisterDevice from './components/RegisterDevice';
 import ActiveCounts from './ActiveCount';
 
+
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
@@ -32,6 +33,7 @@ function App() {
           <Route path='/fetchlogs' element={<Fetchlogs />} />
           <Route path='/registerdevice' element={<RegisterDevice />} />
           <Route path='/activecounts' element={<ActiveCounts />} />
+         
         </Routes>
         </div>
     

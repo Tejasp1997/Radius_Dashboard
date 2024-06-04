@@ -183,13 +183,14 @@
     justify-content: space-around;
     padding: 8px 15px;
     border-radius: 5px;
+    min-height: 180px;
   }
   
   .card.first {
-    background-color: #db9600;
+    background-color: #eca201;
   }
   .card.first:hover {
-    /* background-color: rgba(228, 121, 0, 0.9); */
+    background-color: rgba(207, 115, 9, 0.9);
     cursor: pointer;
   }
   
@@ -197,21 +198,21 @@
     background-color: #04ca0e;
   }
   .card.second:hover {
-    /* background-color: rgba(228, 121, 0, 0.9); */
+    background-color: rgba(30, 133, 5, 0.9);
     cursor: pointer;
   }
   .card.third {
     background-color: #337aff;
   }
   .card.third:hover {
-    /* background-color: rgba(228, 121, 0, 0.9); */
+    background-color: rgba(3, 81, 184, 0.9);
     cursor: pointer;
   }
   .card.fourth {
     background-color: #e73535;
   }
   .card.fourth:hover {
-    /* background-color: rgba(228, 121, 0, 0.9); */
+    background-color: rgba(177, 28, 2, 0.9);
     cursor: pointer;
   }
   
